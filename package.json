@@ -17,7 +17,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://create-six-woad.vercel.app",
+  "homepage": ".",
   "eslintConfig": {
     "extends": [
       "react-app",

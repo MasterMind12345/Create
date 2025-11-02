@@ -8,6 +8,7 @@ function App() {
 
   useEffect(() => {
     checkUser();
+    // NE PAS enregistrer le Service Worker
   }, []);
 
   const checkUser = async () => {
