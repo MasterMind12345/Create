@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import UserAuth from './components/UserAuth';
 import UserDashboard from './components/UserDashboard';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import FloatingInstallButton from './components/FloatingInstallButton';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -8,7 +10,7 @@ function App() {
 
   useEffect(() => {
     checkUser();
-    // NE PAS enregistrer le Service Worker
+    registerServiceWorker();
   }, []);
 
   const checkUser = async () => {
@@ -21,6 +23,17 @@ function App() {
       console.error('Erreur:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const registerServiceWorker = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker enregistré avec succès');
+      } catch (error) {
+        console.log("L'enregistrement du Service Worker a échoué : ", error);
+      }
     }
   };
 
@@ -42,6 +55,11 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600">
+      {/* Prompt d'installation PWA */}
+      <PWAInstallPrompt />
+      <FloatingInstallButton />
+
+      {/* Header */}
       {user && (
         <header className="bg-white/10 backdrop-blur-lg border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,6 +85,7 @@ function App() {
         </header>
       )}
 
+      {/* Main Content */}
       <main className={user ? 'py-8' : 'min-h-screen flex items-center justify-center py-8'}>
         {!user ? (
           <UserAuth setUser={setUser} />
