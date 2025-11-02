@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const ShareLink = ({ user }) => {
-  const shareUrl = `${window.location.origin}/send/${user.username}`;
+  const shareUrl = `${window.location.origin}/share?to=${user.username}`;
   const [copied, setCopied] = useState(false);
   
   const copyToClipboard = () => {
@@ -81,11 +81,11 @@ const ShareLink = ({ user }) => {
         <div className="flex items-start space-x-3">
           <div className="text-yellow-400 text-xl">💡</div>
           <div>
-            <h4 className="text-yellow-400 font-semibold mb-2">Comment partager ?</h4>
+            <h4 className="text-yellow-400 font-semibold mb-2">Nouveau lien simplifié !</h4>
             <ul className="text-yellow-300/80 text-sm space-y-1">
-              <li>• Partage le lien dans tes stories Instagram</li>
-              <li>• Envoie-le à tes amis sur WhatsApp</li>
-              <li>• Partage-le sur tes réseaux sociaux</li>
+              <li>• Lien plus court et plus simple</li>
+              <li>• Compatible avec tous les navigateurs</li>
+              <li>• Partage-le dans tes stories Instagram</li>
               <li>• Ajoute-le à ta bio TikTok ou Instagram</li>
             </ul>
           </div>
