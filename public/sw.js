@@ -1,5 +1,5 @@
-const CACHE_NAME = 'secretstory-v1.4';
-const STATIC_CACHE = 'secretstory-static-v1.0';
+const CACHE_NAME = 'secretstory-v1.5';
+const STATIC_CACHE = 'secretstory-static-v1.1';
 
 // Événement d'installation
 self.addEventListener('install', (event) => {
@@ -8,10 +8,11 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        // Cache uniquement les ressources critiques
         return cache.addAll([
           '/',
           '/index.html',
+          '/static/js/bundle.js',
+          '/static/css/main.css',
           '/manifest.json',
           '/icon-192.png',
           '/icon-512.png',
@@ -26,7 +27,6 @@ self.addEventListener('install', (event) => {
       })
   );
   
-  // Force le Service Worker à s'activer immédiatement
   self.skipWaiting();
 });
 
@@ -38,7 +38,6 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          // Supprime les anciens caches
           if (cacheName !== STATIC_CACHE && cacheName !== CACHE_NAME) {
             console.log('🗑️ Suppression ancien cache:', cacheName);
             return caches.delete(cacheName);
@@ -48,7 +47,6 @@ self.addEventListener('activate', (event) => {
     })
   );
   
-  // Prend le contrôle de toutes les pages
   self.clients.claim();
 });
 
@@ -57,14 +55,16 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Ignore les requêtes non-GET et les requêtes chrome-extension
-  if (request.method !== 'GET' || request.url.includes('chrome-extension')) {
-    return;
+  // EXCLURE les requêtes API Supabase et autres APIs externes
+  if (request.url.includes('supabase.co') || 
+      request.url.includes('/api/') ||
+      request.method !== 'GET' ||
+      request.url.includes('chrome-extension')) {
+    return; // Laisser passer sans interception
   }
 
-  // Pour les routes SPA, sert toujours index.html
-  if (request.destination === 'document' || 
-      (request.mode === 'navigate' && !url.pathname.includes('.'))) {
+  // Pour la navigation SPA
+  if (request.mode === 'navigate' && !url.pathname.includes('.')) {
     event.respondWith(
       caches.match('/index.html')
         .then((cachedResponse) => {
@@ -73,27 +73,42 @@ self.addEventListener('fetch', (event) => {
           }
           return fetch(request)
             .then((response) => {
-              // Cache la nouvelle version d'index.html
               const responseClone = response.clone();
               caches.open(STATIC_CACHE)
                 .then((cache) => cache.put('/index.html', responseClone));
               return response;
             })
             .catch(() => {
-              // Fallback offline
               return new Response(`
                 <!DOCTYPE html>
                 <html>
                   <head>
                     <title>SecretStory</title>
                     <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <style>
+                      body {
+                        margin: 0;
+                        padding: 0;
+                        background: linear-gradient(135deg, #8B5CF6, #EC4899);
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        color: white;
+                      }
+                      .container {
+                        text-align: center;
+                        padding: 2rem;
+                      }
+                    </style>
                   </head>
                   <body>
-                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: white; font-family: Arial;">
-                      <div style="text-align: center;">
-                        <h1>SecretStory</h1>
-                        <p>Application hors ligne</p>
-                      </div>
+                    <div class="container">
+                      <h1>SecretStory</h1>
+                      <p>Application hors ligne</p>
+                      <p>Revenez quand vous aurez une connexion internet</p>
                     </div>
                   </body>
                 </html>
@@ -106,19 +121,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Pour les ressources statiques (CSS, JS, images)
+  // Pour les ressources statiques
   event.respondWith(
     caches.match(request)
       .then((response) => {
-        // Retourne la ressource en cache si disponible
         if (response) {
           return response;
         }
 
-        // Sinon, fait la requête réseau
         return fetch(request)
           .then((response) => {
-            // Ne cache que les ressources réussies
             if (response.status === 200) {
               const responseToCache = response.clone();
               caches.open(CACHE_NAME)
@@ -130,25 +142,23 @@ self.addEventListener('fetch', (event) => {
           })
           .catch((error) => {
             console.error('❌ Erreur fetch:', error);
-            // Pour les images, retourne une image de fallback
             if (request.destination === 'image') {
               return caches.match('/icon-192.png');
             }
+            return new Response('Ressource non disponible hors ligne', {
+              status: 408,
+              headers: { 'Content-Type': 'text/plain' }
+            });
           });
       })
   );
 });
 
-// Événement pour les messages (communication avec l'app)
+// Événement pour les messages
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-});
-
-// Événement de synchronisation en arrière-plan
-self.addEventListener('sync', (event) => {
-  console.log('🔄 Synchronisation en arrière-plan:', event.tag);
 });
 
 // Gestion des push notifications
@@ -189,10 +199,4 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-// Gestion des erreurs
-self.addEventListener('error', (error) => {
-  console.error('❌ Erreur Service Worker:', error);
-});
-
-// Log pour confirmer le chargement
 console.log('🚀 Service Worker chargé avec succès! Version:', CACHE_NAME);
