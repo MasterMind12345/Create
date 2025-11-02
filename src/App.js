@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserAuth from './components/UserAuth';
 import UserDashboard from './components/UserDashboard';
-import PWAInstallPrompt from './components/PWAInstallPrompt';
-import FloatingInstallButton from './components/FloatingInstallButton';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -10,7 +8,6 @@ function App() {
 
   useEffect(() => {
     checkUser();
-    // NE PAS appeler registerServiceWorker()
   }, []);
 
   const checkUser = async () => {
@@ -44,10 +41,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600">
-      {/* Désactivé temporairement */}
-      {/* <PWAInstallPrompt />
-      <FloatingInstallButton /> */}
-
       {user && (
         <header className="bg-white/10 backdrop-blur-lg border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
