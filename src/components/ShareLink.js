@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 const ShareLink = ({ user }) => {
-  // Utiliser HashRouter URLs
-  const shareUrl = `${window.location.origin}/#/share?to=${user.username}`;
+  // NOUVEAU FORMAT : /to/username au lieu de /send/username
+  const shareUrl = `${window.location.origin}/#/to/${user.username}`;
   const [copied, setCopied] = useState(false);
   
   const copyToClipboard = () => {
@@ -77,19 +77,18 @@ const ShareLink = ({ user }) => {
         </div>
       </div>
 
-      {/* Instructions */}
-      <div className="bg-green-500/20 backdrop-blur-lg rounded-2xl p-6 border border-green-500/30">
-        <div className="flex items-start space-x-3">
-          <div className="text-green-400 text-xl">🚀</div>
-          <div>
-            <h4 className="text-green-400 font-semibold mb-2">Nouveau système de liens !</h4>
-            <ul className="text-green-300/80 text-sm space-y-1">
-              <li>• ✅ Liens 100% fiables</li>
-              <li>• ✅ Compatible avec tous les navigateurs</li>
-              <li>• ✅ Plus d'erreurs 404</li>
-              <li>• ✅ Partage simplifié</li>
-            </ul>
+      {/* Aperçu du lien */}
+      <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-400/30">
+        <div className="text-center">
+          <h4 className="text-white font-semibold mb-3">✨ Nouveau lien optimisé</h4>
+          <div className="bg-black/30 rounded-lg p-4 mb-4">
+            <p className="text-white/80 text-sm font-mono break-all">
+              {shareUrl}
+            </p>
           </div>
+          <p className="text-white/60 text-sm">
+            Lien intégré à l'application - Plus d'erreurs 404 !
+          </p>
         </div>
       </div>
     </div>
