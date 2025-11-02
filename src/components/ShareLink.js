@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 const ShareLink = ({ user }) => {
-  const shareUrl = `${window.location.origin}/share?to=${user.username}`;
+  // Utiliser HashRouter URLs
+  const shareUrl = `${window.location.origin}/#/share?to=${user.username}`;
   const [copied, setCopied] = useState(false);
   
   const copyToClipboard = () => {
@@ -77,16 +78,16 @@ const ShareLink = ({ user }) => {
       </div>
 
       {/* Instructions */}
-      <div className="bg-yellow-500/20 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30">
+      <div className="bg-green-500/20 backdrop-blur-lg rounded-2xl p-6 border border-green-500/30">
         <div className="flex items-start space-x-3">
-          <div className="text-yellow-400 text-xl">💡</div>
+          <div className="text-green-400 text-xl">🚀</div>
           <div>
-            <h4 className="text-yellow-400 font-semibold mb-2">Nouveau lien simplifié !</h4>
-            <ul className="text-yellow-300/80 text-sm space-y-1">
-              <li>• Lien plus court et plus simple</li>
-              <li>• Compatible avec tous les navigateurs</li>
-              <li>• Partage-le dans tes stories Instagram</li>
-              <li>• Ajoute-le à ta bio TikTok ou Instagram</li>
+            <h4 className="text-green-400 font-semibold mb-2">Nouveau système de liens !</h4>
+            <ul className="text-green-300/80 text-sm space-y-1">
+              <li>• ✅ Liens 100% fiables</li>
+              <li>• ✅ Compatible avec tous les navigateurs</li>
+              <li>• ✅ Plus d'erreurs 404</li>
+              <li>• ✅ Partage simplifié</li>
             </ul>
           </div>
         </div>
