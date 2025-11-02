@@ -46,12 +46,7 @@ const ShareLink = ({ user }) => {
             readOnly
             className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
           />
-          <button
-            onClick={copyToClipboard}
-            className="bg-white text-purple-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 min-w-0"
-          >
-            {copied ? '✅ Copié!' : '📋 Copier'}
-          </button>
+  
         </div>
       </div>
 
